@@ -176,7 +176,9 @@ export const sheetStack = Sheets();
 
 sheetStack
     .setMinWidth("auto")
-    .setWidth("auto");
+    .setWidth("auto")
+    .setMaxWidth("70%")
+    .setJustifySelf("center");
 
 export function getYearList(): string[] {
     return new Array(new Date().getFullYear() - 2000 + 1)
@@ -283,21 +285,4 @@ export const ExistingSongDialog = (dropSongs: WriteSignal<Song[]>, songs: Song[]
 
 export function randomInteger(lower: number, upper: number): number {
     return lower + Math.floor(Math.random() * (upper - lower + 1));
-}
-
-export function checkDate(date: string) {
-    const releaseDate = new Date(date);
-    const releaseDateLimit = new Date();
-    releaseDateLimit.setDate(releaseDateLimit.getDate() + 14);
-    if (releaseDate < releaseDateLimit) {
-        sheetStack.addSheet(
-            Grid(
-                SheetHeader("Warning", sheetStack),
-                Grid(
-                    Label("Your release date is less than 14 days away. Are you sure you want to continue?").setTextSize("lg"),
-                    PrimaryButton("Ok").onClick(() => sheetStack.removeOne()),
-                ).setGap(),
-            ),
-        );
-    }
 }

@@ -1,4 +1,4 @@
-import { activeUser, allowedImageFormats, checkDate, ErrorMessage, getSecondary, permCheck, ProfileData, RegisterAuthRefresh, sheetStack, showProfilePicture, streamingImages } from "shared/helper.ts";
+import { activeUser, allowedImageFormats, ErrorMessage, getSecondary, permCheck, ProfileData, RegisterAuthRefresh, sheetStack, showProfilePicture, streamingImages } from "shared/helper.ts";
 import { userHistoryEventEntry } from "shared/userHistoryEventEntry.ts";
 import { appendBody, asRef, asRefRecord, Box, CachedPages, Checkbox, Content, createCachedLoader, createFilePicker, createIndexPaginationLoader, createRoute, css, DateInput, DialogContainer, DropDown, Empty, FullWidthSection, Grid, Image, isMobile, Label, PrimaryButton, SecondaryButton, Spinner, StartRouting, TextAreaInput, TextButton, TextInput, WebGenTheme } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
@@ -100,10 +100,8 @@ creationState.primaryGenre.listen((val) => {
         }
         return song;
     }));
-    if (val) {
-        if (Object.keys(genres).includes(val) && !recordGenres[val].includes(creationState.secondaryGenre.value ?? "")) {
-            creationState.secondaryGenre.setValue(recordGenres[val][0]);
-        }
+    if (val && (Object.keys(genres).includes(val) && !recordGenres[val].includes(creationState.secondaryGenre.value ?? ""))) {
+        creationState.secondaryGenre.setValue(recordGenres[val][0]);
     }
 });
 
@@ -114,12 +112,6 @@ creationState.songs.listen((val) => {
             s.primaryGenre = genre;
             return s;
         }));
-    }
-});
-
-creationState.release.listen((val) => {
-    if (val) {
-        checkDate(val);
     }
 });
 

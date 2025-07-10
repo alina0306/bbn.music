@@ -1,4 +1,4 @@
-import { allowedImageFormats, checkDate, ErrorMessage, getSecondary, RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
+import { allowedImageFormats, ErrorMessage, getSecondary, RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
 import { appendBody, asRef, asRefRecord, Box, Color, Content, createFilePicker, css, DateInput, DialogContainer, DropDown, Empty, FullWidthSection, Grid, Image, Label, PrimaryButton, SecondaryButton, SheetHeader, Spinner, TextAreaInput, TextInput, WebGenTheme } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -77,6 +77,44 @@ const validator = (page: number) => async () => {
         return;
     }
 
+    if (page === 1 && creationState.release.value) {
+        const releaseDate = new Date(creationState.release.value);
+        releaseDate.setHours(0, 0, 0, 0);
+
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        const releaseDateLimit = new Date();
+        releaseDateLimit.setHours(0, 0, 0, 0);
+        releaseDateLimit.setDate(releaseDateLimit.getDate() + 14);
+
+        if (releaseDate >= now && releaseDate <= releaseDateLimit) {
+            sheetStack.addSheet(
+                Grid(
+                    SheetHeader("Release Date Notice", sheetStack),
+                    Grid(
+                        Label("Important: Your selected release date is within 14 days.").setTextSize("xl"),
+                        Label("Please note that our partners require adequate processing time, and drops submitted with less than 14 days notice may not be available on all platforms by your target date.").setTextSize("lg"),
+                        Grid(
+                            SecondaryButton("Go Back").onClick(() => {
+                                sheetStack.removeOne();
+                                creationState.validationState.setValue(undefined);
+                            }),
+                            PrimaryButton("Proceed Anyway").onClick(async () => {
+                                sheetStack.removeOne();
+                                creationState.validationState.setValue(undefined);
+                                await saveDrop();
+                                creationState.page.setValue(page + 1);
+                                creationState.validationState.setValue(undefined);
+                            }),
+                        ).setGap().setTemplateColumns("1fr 1fr"),
+                    ).setGap(),
+                ),
+            );
+            return;
+        }
+    }
+
     creationState.validationState.setValue(undefined);
     await saveDrop();
     creationState.page.setValue(page + 1);
@@ -100,12 +138,6 @@ const footer = (page: number) =>
 creationState.primaryGenre.listen((_, old) => {
     if (old !== undefined) {
         creationState.secondaryGenre.setValue(undefined);
-    }
-});
-
-creationState.release.listen((val) => {
-    if (val) {
-        checkDate(val);
     }
 });
 
