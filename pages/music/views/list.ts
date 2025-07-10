@@ -19,34 +19,36 @@ export function DropEntry(x: Partial<Drop>, showAll: boolean = false) {
     return Entry(
         BasicEntry(x.title ?? "(no drop name)", x.release ?? "(no release date)")
             .addPrefix(showPreviewImage(x).setWidth("100px").setRadius("large"))
-            .addSuffix((() => {
-                if (x.type == zDropType.enum.UNDER_REVIEW) {
-                    return PillSuffix("Under Review");
-                }
-
-                if (x.type == zDropType.enum.REVIEW_DECLINED) {
-                    return PillSuffix("Declined");
-                }
-
-                if (showAll && x.type == zDropType.enum.PUBLISHED) {
-                    return PillSuffix("Published");
-                }
-
-                if (showAll && x.type == zDropType.enum.PRIVATE) {
-                    return PillSuffix("Private");
-                }
-
-                if (showAll && x.type == zDropType.enum.UNSUBMITTED) {
-                    return PillSuffix("Draft");
-                }
-
-                if (showAll && x.type == zDropType.enum.TAKEDOWN_REQUESTED) {
-                    return PillSuffix("Takedown Requested");
-                }
-
-                return Empty();
-            })()),
+            .addSuffix(TypeSuffix(x.type, showAll)),
     ).onClick(() => location.href = x.type === zDropType.enum.UNSUBMITTED ? `/c/music/new-drop?id=${x._id}` : `/c/music/edit?id=${x._id}`);
+}
+
+export function TypeSuffix(type?: DropType, showAll: boolean = false) {
+    if (type == zDropType.enum.UNDER_REVIEW) {
+        return PillSuffix("Under Review");
+    }
+
+    if (type == zDropType.enum.REVIEW_DECLINED) {
+        return PillSuffix("Declined");
+    }
+
+    if (showAll && type == zDropType.enum.PUBLISHED) {
+        return PillSuffix("Published");
+    }
+
+    if (showAll && type == zDropType.enum.PRIVATE) {
+        return PillSuffix("Private");
+    }
+
+    if (showAll && type == zDropType.enum.UNSUBMITTED) {
+        return PillSuffix("Draft");
+    }
+
+    if (showAll && type == zDropType.enum.TAKEDOWN_REQUESTED) {
+        return PillSuffix("Takedown Requested");
+    }
+
+    return Empty();
 }
 
 export function ArtistEntry(x: Artist) {

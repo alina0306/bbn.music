@@ -2,8 +2,9 @@ import { sheetStack, showPreviewImage } from "shared/helper.ts";
 import { BasicEntry } from "shared/mod.ts";
 import { asRef, Async, Box, Entry, Image, Label, Spinner } from "webgen/mod.ts";
 import { AdminDrop, AdminWallet, API, Group, OAuthApp, PayoutList, stupidErrorAlert } from "../../spec/mod.ts";
-import { editOAuthSheet } from "./sheets.ts";
+import { TypeSuffix } from "../music/views/list.ts";
 import { walletSheet } from "./pages/search.ts";
+import { editOAuthSheet } from "./sheets.ts";
 
 export function ReviewEntry(x: AdminDrop, small: boolean = false) {
     return Entry(
@@ -15,7 +16,8 @@ export function ReviewEntry(x: AdminDrop, small: boolean = false) {
             `${x.accountType} user: ${x.user} - gtin: ${x.gtin ?? "(no GTIN)"} - id: ${x._id}`,
         )
             .onClick(() => location.href = `/c/music/edit?id=${x._id}`)
-            .addPrefix(showPreviewImage(x).setWidth(small ? "50px" : "100px").setRadius("large")),
+            .addPrefix(showPreviewImage(x).setWidth(small ? "50px" : "100px").setRadius("large"))
+            .addSuffix(TypeSuffix(x.type, true)),
     );
 }
 
